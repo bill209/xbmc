@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.4.4.min.js"></script>
+<script type="text/javascript">
+$(function() {
+    var ele   = $('#scroll');
+    var speed = 25, scroll = 5, scrolling;
+
+    $('#scroll-up').mouseenter(function() {
+        // Scroll the element up
+        scrolling = window.setInterval(function() {
+            ele.scrollTop( ele.scrollTop() - scroll );
+        }, speed);
+    });
+
+    $('#scroll-down').mouseenter(function() {
+        // Scroll the element down
+        scrolling = window.setInterval(function() {
+            ele.scrollTop( ele.scrollTop() + scroll );
+        }, speed);
+    });
+
+    $('#scroll-up, #scroll-down').bind({
+        click: function(e) {
+            // Prevent the default click action
+            e.preventDefault();
+        },
+        mouseleave: function() {
+            if (scrolling) {
+                window.clearInterval(scrolling);
+                scrolling = false;
+            }
+        }
+    });
+});
+</script>
+<style type="text/css">
+<!--
+div#scroll {
+    width: 200px;
+    height: 200px;
+    overflow: hidden;
+    padding: 4px;
+    margin-bottom: 20px;
+}
+-->
+</style>
+</head>
+<body>
+
+<div id="scroll">
+    Content here and more content here<br /><br />
+    Content here and more content here<br /><br />
+    Content here and more content here<br /><br />
+    Content here and more content here<br /><br />
+    Content here and more content here<br /><br />
+    Content here and more content here<br /><br />
+    Content here and more content here<br /><br />
+    Content here and more content here<br /><br />
+    Content here and more content here<br /><br />
+    Content here and more content here<br /><br />
+    Content here and more content here<br /><br />
+    Content here and more content here<br /><br />
+    Content here and more content here<br /><br />
+    Content here and more content here
+</div>
+
+<a href="#" id="scroll-down">Down</a> - <a href="#" id="scroll-up">Up</a>
+
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>NowPlaying</title>
+	<link rel="stylesheet" href="js/libs/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/main.css">
+</head>
+
+<body ng-app="NowPlaying" ng-controller='mainCtrl'>
+	<div id='container'>
+		<img id='bigScreen' ng-src='{{img.url}}'>
+		<div ng-include src="'views/profile.html'"></div>
+		<div id='movieListBox'  ng-controller="MovieListCtrl">
+			<div id='movieListWell' class='well trans80'>
+				<ul id='bookmarks'>
+					<li ng-repeat='letter in alphabet' ><a href="" ng-click="jumpToBM(letter)">{{letter}}</a></li>
+				</ul>
+
+				<div id='innerWell' class='well trans80'>
+					<ul id='movieList' ng-app="link" ng-mouseleave='leaveMovieList($index)'>
+						<li 	id="movie{{movie.idx}}"
+							class="list-group-item {{movie.bookmark }}"
+							ng-repeat='movie in data | limitTo: 999'
+							ng-click="selectMovie($index, movie.title)"
+							ng-class='{activeMovie: $index==selectedRow, highlightedMovie: $index==highlightedRow}'
+							ng-mouseenter='highlightMovie($index)'
+							my-select-first-movie>
+							{{movie.title}}
+							<span class='movieFlags'
+								ng-show="getFlags(movie.movieId)">*</span>
+						</li>
+					</ul>
+				</div>
+
+				<div id="scrollBox">
+					<div id="scrollUp">up</div>
+					<div id="scrollDn">dn</div>
+				</div>
+			</div>
+		</div>
+		<footer>This product uses the TMDb API but is not endorsed or certified by TMDb.<img src='images/tmdb_sm.png'/></footer>
+	</div>
+
+	<script src="js/libs/jquery/jquery-2.0.3.js"></script>
+	<script src="js/libs/angular/angular.min.js"></script>
+	<script src="js/libs/bootstrap/js/bootstrap.min.js"></script>
+	<script src='js/main.js'></script>
+	<script src='js/functions.js'></script>
+</body>
+</html>

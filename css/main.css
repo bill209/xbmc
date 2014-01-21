@@ -1,0 +1,156 @@
+figure {
+  margin: 0;
+}
+
+    .container {
+      width: 200px;
+      height: 260px;
+      position: relative;
+      margin: 0 auto 40px;
+      border: 1px solid #CCC;
+      -webkit-perspective: 800px;
+         -moz-perspective: 800px;
+           -o-perspective: 800px;
+              perspective: 800px;
+    }
+
+    #card {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      -webkit-transition: -webkit-transform 1s;
+         -moz-transition: -moz-transform 1s;
+           -o-transition: -o-transform 1s;
+              transition: transform 1s;
+      -webkit-transform-style: preserve-3d;
+         -moz-transform-style: preserve-3d;
+           -o-transform-style: preserve-3d;
+              transform-style: preserve-3d;
+      -webkit-transform-origin: right center;
+         -moz-transform-origin: right center;
+           -o-transform-origin: right center;
+              transform-origin: right center;
+    }
+
+    #card.flipped {
+      -webkit-transform: translateX( -100% ) rotateY( -180deg );
+         -moz-transform: translateX( -100% ) rotateY( -180deg );
+           -o-transform: translateX( -100% ) rotateY( -180deg );
+              transform: translateX( -100% ) rotateY( -180deg );
+    }
+
+    #card figure {
+      display: block;
+      height: 100%;
+      width: 100%;
+      line-height: 260px;
+      color: white;
+      text-align: center;
+      font-weight: bold;
+      font-size: 140px;
+      position: absolute;
+      -webkit-backface-visibility: hidden;
+         -moz-backface-visibility: hidden;
+           -o-backface-visibility: hidden;
+              backface-visibility: hidden;
+    }
+
+    #card .front {
+      background: red;
+    }
+
+    #card .back {
+      background: blue;
+      -webkit-transform: rotateY( 180deg );
+         -moz-transform: rotateY( 180deg );
+           -o-transform: rotateY( 180deg );
+              transform: rotateY( 180deg );
+    }
+
+body { overflow: hidden; background-color: #333 }
+ul { width: 400px; }
+ul li a { color: #ddd;  text-decoration: none; }
+
+.trans40 {opacity:0.4; filter:alpha(opacity=40); /* For IE8 and earlier */}
+.trans80 {opacity:0.8; filter:alpha(opacity=80); /* For IE8 and earlier */}
+.shadow {
+  -moz-box-shadow:    0px 0px 15px 3px #666;
+  -webkit-box-shadow: 0px 0px 15px 3px #666;
+  box-shadow:         0px 0px 15px 3px #666;
+}
+
+#container { padding: 20px;  overflow: hidden; width: 1000px; height: 851px; position: relative;  margin: 10px auto;  }
+#bigScreen { position: absolute; top: 0; left: 0;  min-width: 1000px;  min-height: 851px; z-index: -1;
+/* opacity:0.4; filter:alpha(opacity=40); */
+/* For IE8 and earlier */
+border-radius: 8;
+-moz-border-radius: 8px;
+border-radius: 8px;
+}
+
+#bookmarks { height: 25px; padding: 2px 0 0 2px; border: solid 1px #aaa; width: 480px; text-align: center; }
+#bookmarks li { width: 18px; float: left; list-style-type: none; }
+
+#movieListWell { height: 685px; width: 520px; overflow: hidden; overflow-y: scroll; border: solid 1px #aaa;  background-color: #333;}
+#innerWell { float: right; height: 615px; width: 400px; padding: 0; margin: 0; border: solid 1px #333; overflow: hidden; background-color: #333; }
+
+/* height is 3px more in order to keep the scrollDn from endlessly looping on the last row */
+#movieList { position: relative; width: 400px; height: 618px;  overflow: hidden; overflow-y: scroll; padding: 0px; margin-bottom: 20px; }
+
+#movieList li { width: 400px; background-color: #888;}
+.movieFlags { float: right; }
+
+#scrollBox { float: left; height: 600px; }
+#scrollBox div { width: 60px; height: 160px; border: solid 1px #ddd; }
+#scrollDn { margin-top: 280px; }
+
+#movieList li.activeMovie {
+color: #ffffff;
+background-color: #428bca;
+border-color: #428bca; }
+
+#movieList li.highlightedMovie { background-color: #eef; color: #666; }
+
+.activeRow{
+color: red;
+}
+
+
+#profile img { width: 400px; border-radius: 4; -moz-border-radius: 4px; border-radius: 4px; }
+#info { border: solid 1px #ddd; }
+
+
+p.viewport {
+	border-radius: 5px 5px 5px 5px ;
+	box-shadow: 1px 1px 5px #454545 ;
+	height: 593px;
+	position: relative ;
+	width: 400px ;
+}
+
+p.viewport img.fader {
+	border-radius: 5px 5px 5px 5px ;
+	display: none ;
+	height: 593px ;
+	left: 0px ;
+	position: absolute ;
+	top: 0px ;
+	width: 400px ;
+	z-index: 2 ;
+}
+
+p.viewport img.fader.show {
+	display: block ;
+	transition: opacity 500ms ease ;
+}
+
+p.viewport img.fader.fadeOut {
+	opacity: 0 ;
+}
+
+p.viewport img.image {
+	border-radius: 5px 5px 5px 5px ;
+	display: block ;
+	height: 593px ;
+	width: 400px ;
+}

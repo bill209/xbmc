@@ -1,0 +1,36 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>jQuery Test</title>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+</head>
+<body>
+
+	<script type="text/javascript" charset="utf-8">
+		var api_key = '829f2c4b8c9c5304ea86fc7cf47b1053';
+
+		$(document).ready(function(){
+			$.ajax({
+				url: 'http://api.themoviedb.org/3/search/movie?api_key=' + api_key + '&query=fight+club',
+				dataType: 'jsonp',
+				jsonpCallback: 'testing'
+			}).error(function() {
+				console.log('error')
+			}).done(function(response) {
+				for (var i = 0; i < response.results.length; i++) {
+					$('#search_results').append('<li>' + response.results[i].title + '</li>');
+				}
+			});
+		});
+	</script>
+
+	<h2>jQuery Test</h2>
+	<h3>Results</h3>
+
+	<p id="error"></p>
+	<ul id="search_results"></ul>
+
+</body>
+</html>

@@ -8,10 +8,9 @@
 </head>
 
 <body ng-app="NowPlaying" ng-controller='mainCtrl'>
-		<h3 style='color: #eee;'>test</h3>
 	<div id='container'>
 		<img id='bigScreen' ng-src='{{img.url}}'>
-		<div ng-include src="'views/profile.html'"></div>
+ 		<div id='profile' ng-include src="'views/profile.html'"></div>
 		<div id='movieListBox'  ng-controller="MovieListCtrl">
 			<div id='movieListWell' class='well trans80'>
 				<ul id='bookmarks'>

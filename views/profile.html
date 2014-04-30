@@ -1,13 +1,13 @@
 <div class='test' ng-controller= 'profileCtrl' >
- <section class="container">
-    <div id="profile"  ng-class="{zzzflipped: flipper == 1}">
-<!--    <div id="card"  ng-class="{zzzflipped: flipper == 1}">
-       <figure class="front" ng-click="test(1)">1</figure>
-      <figure class="back" ng-click="test(2)">2</figure>
- -->    </div>
-  </section>
+	 <section class="container">
+		<div id="card"  ng-class="{zzzflipped: flipper == 1}">
+			<p bn-fade-helper class="viewport" >
+				<img ng-src='{{profile.img.url}}' class="image">
+			</p>
+		</div>
+	</section>
 
-  <section id="options">
+	<section id="options">
 <!--     <p><button id="flip" ng-click='test()'>Flip Card</button></p> -->
-  </section>
+	</section>
 </div>

@@ -142,7 +142,7 @@ app.factory('xbmcFactory', function($q, $http) {
 		getMovies: function(){
 			var deferred = $q.defer();
 			$http
-				.get('/xbmc/php/movies_2.json')
+				.get('../xbmc/php/movies_2.json')
 				.then(function(d){
 					var movieData = addBookmarks(d.data.result.movies);
 					deferred.resolve(angular.fromJson(movieData));
@@ -155,7 +155,7 @@ app.factory('xbmcFactory', function($q, $http) {
 		getMovieCache: function(){
 			var deferred = $q.defer();
 			$http
-				.get('/xbmc/php/movieCache.json')
+				.get('../xbmc/php/movieCache.json')
 				.then(function(d){
 					var movieCache =[];
 					$.each(d.data.result.movies, function(){				// convert json to associative array

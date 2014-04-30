@@ -1,3 +1,5 @@
+.hide { display: none; }
+
 figure {
   margin: 0;
 }
@@ -115,7 +117,7 @@ border-color: #428bca; }
 color: red;
 }
 
-
+#profile { position: absolute; right: 220px; }
 #profile img { width: 400px; border-radius: 4; -moz-border-radius: 4px; border-radius: 4px; }
 #info { border: solid 1px #ddd; }
 

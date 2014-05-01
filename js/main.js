@@ -4,6 +4,7 @@ $(function(){
 		toggleClass('flipped');
 	});
 });
+console.log('abc');
 
 var app = angular.module('NowPlaying', []);
 

@@ -1,5 +1,7 @@
 // functions  ----------------------------------------------------------
 
+// adds the bookmard field to the movie array, the value of which is the first letter of the film for the first film with that starting letter
+// note: the first film has a bookmark value of 'firstMovie';
 function addBookmarks(movieJson){
 	var movieArr = [], articleArr = ['the '], i=0, lastBM = ' ', cc=0, firstLetter = '', currBM = '';
 	$.each(movieJson,function(idx){
@@ -14,27 +16,28 @@ function addBookmarks(movieJson){
 			if(that.title.substr(0, len).toLowerCase() == val){
 			foundArticleLen = len;
 		}
-	});
+		});
 
-	firstLetter = that.title.substr(foundArticleLen,1);
-	charCode = firstLetter.charCodeAt(0);
-	currBM = '';
-	if(idx === 0) {
-		currBM = 'firstMovie';
-	} else {
-		if(charCode > 64 && charCode < 91){
-			if(firstLetter != lastBM){
-				currBM = firstLetter;
-				lastBM = firstLetter;
+		firstLetter = that.title.substr(foundArticleLen,1);
+		charCode = firstLetter.charCodeAt(0);
+		currBM = '';
+		if(idx === 0) {
+			currBM = 'firstMovie';
+		} else {
+			if(charCode > 64 && charCode < 91){
+				if(firstLetter != lastBM){
+					currBM = firstLetter;
+					lastBM = firstLetter;
+				}
 			}
 		}
-	}
-	movieArr[i]['idx'] = idx;
-	movieArr[i++]['bookmark'] = currBM;
+		movieArr[i]['idx'] = idx;
+		movieArr[i++]['bookmark'] = currBM;
 	});
-	return movieArr;
+		return movieArr;
 }
 
+// scroll box functions
 $(function() {
 	var ele   = $('#movieList'), speed = 15, scroll = 15, scrolling = '', topRow = 0,  textUp = 1;
 	var rowHeight = 41; //$('#movie0').outerHeight() - 1;  ** not defined yet

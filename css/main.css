@@ -4,70 +4,6 @@ figure {
   margin: 0;
 }
 
-    .container {
-      width: 200px;
-      height: 260px;
-      position: relative;
-      margin: 0 auto 40px;
-      border: 1px solid #CCC;
-      -webkit-perspective: 800px;
-         -moz-perspective: 800px;
-           -o-perspective: 800px;
-              perspective: 800px;
-    }
-
-    #card {
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      -webkit-transition: -webkit-transform 1s;
-         -moz-transition: -moz-transform 1s;
-           -o-transition: -o-transform 1s;
-              transition: transform 1s;
-      -webkit-transform-style: preserve-3d;
-         -moz-transform-style: preserve-3d;
-           -o-transform-style: preserve-3d;
-              transform-style: preserve-3d;
-      -webkit-transform-origin: right center;
-         -moz-transform-origin: right center;
-           -o-transform-origin: right center;
-              transform-origin: right center;
-    }
-
-    #card.flipped {
-      -webkit-transform: translateX( -100% ) rotateY( -180deg );
-         -moz-transform: translateX( -100% ) rotateY( -180deg );
-           -o-transform: translateX( -100% ) rotateY( -180deg );
-              transform: translateX( -100% ) rotateY( -180deg );
-    }
-
-    #card figure {
-      display: block;
-      height: 100%;
-      width: 100%;
-      line-height: 260px;
-      color: white;
-      text-align: center;
-      font-weight: bold;
-      font-size: 140px;
-      position: absolute;
-      -webkit-backface-visibility: hidden;
-         -moz-backface-visibility: hidden;
-           -o-backface-visibility: hidden;
-              backface-visibility: hidden;
-    }
-
-    #card .front {
-      background: red;
-    }
-
-    #card .back {
-      background: blue;
-      -webkit-transform: rotateY( 180deg );
-         -moz-transform: rotateY( 180deg );
-           -o-transform: rotateY( 180deg );
-              transform: rotateY( 180deg );
-    }
 
 body { overflow: hidden; background-color: #333 }
 ul { width: 400px; }
@@ -81,7 +17,7 @@ ul li a { color: #ddd;  text-decoration: none; }
   box-shadow:         0px 0px 15px 3px #666;
 }
 
-#container { padding: 20px;  overflow: hidden; width: 1000px; height: 851px; position: relative;  margin: 10px auto;  }
+#container { padding: 20px;  overflow: hidden; width: 1000px; height: 810px; position: relative;  margin: 10px auto;  }
 #bigScreen { position: absolute; top: 0; left: 0;  min-width: 1000px;  min-height: 851px; z-index: -1;
 /* opacity:0.4; filter:alpha(opacity=40); */
 /* For IE8 and earlier */
@@ -99,8 +35,11 @@ border-radius: 8px;
 /* height is 3px more in order to keep the scrollDn from endlessly looping on the last row */
 #movieList { position: relative; width: 400px; height: 618px;  overflow: hidden; overflow-y: scroll; padding: 0px; margin-bottom: 20px; }
 
-#movieList li { width: 400px; background-color: #888;}
+#movieList li { width: 400px; background-color: #888; height: 40px; line-height: 38px;  padding: 0 30px 0 15px; }
 .movieFlags { float: right; }
+.scottPick { float: right; width: 25px; height: 24px; margin-top: 7px;  cursor: pointer; }
+.scottPickTrue {  background: url('../images/ckCircle1.png') no-repeat -1px 0px; }
+.scottPickFalse { background: url('../images/ckCircle1.png') no-repeat -28px 0px; }
 
 #scrollBox { float: left; height: 600px; }
 #scrollBox div { width: 60px; height: 160px; border: solid 1px #ddd; }
@@ -117,7 +56,7 @@ border-color: #428bca; }
 color: red;
 }
 
-#profile { position: absolute; right: 220px; }
+#profile { position: absolute; right: 20px;  width: 400px; height: 500px; }
 #profile img { width: 400px; border-radius: 4; -moz-border-radius: 4px; border-radius: 4px; }
 #info { border: solid 1px #ddd; }
 
@@ -156,3 +95,8 @@ p.viewport img.image {
 	height: 593px ;
 	width: 400px ;
 }
+
+div#footerWell { background-color:  #333; padding: 5px 10px; }
+footer { color: #aaa;  text-align: right; font-size: 8px; }
+footer img { margin-left: 20px; }
+.scott { background-image:  url('../images/scott.png'); background-repeat: no-repeat; }

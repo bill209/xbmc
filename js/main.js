@@ -1,10 +1,6 @@
 $(function(){
-	$('#testclick').click(function(){
-		console.log('flipped');
-		toggleClass('flipped');
-	});
+
 });
-console.log('hi');
 
 var app = angular.module('NowPlaying', []);
 
@@ -14,13 +10,16 @@ var defaultImgURL = 'http://4.bp.blogspot.com/-hIirVYTQFRs/TwdWvcq55uI/AAAAAAAAC
 
 app.controller('mainCtrl', function mainCtrl($scope, xbmcFactory, tmdbFactory, configuration){
 
+	$scope.glob = {};
+	$scope.glob.moviePicks = [];
+	$scope.glob.scottPickins = true;  // used for the Scott konami
 	$scope.curMovie = {};
 	$scope.curMovie.title = '';
 	$scope.curMovie.idx = 0;
 	$scope.img = {};
 	$scope.img = {'url' : defaultImgURL};
 	$scope.tmdbImgPath = tmdbFactory.getImagePath();
-//console.log('configuration.sayHello',configuration.sayHello());
+
 // reset the following to a button
 	configuration.initialize();
 
@@ -56,7 +55,6 @@ app.controller('profileCtrl',function profileCtrl($scope, rottenTomatoesFactory,
 		// get rottentomatoes.com info
 		var promise = rottenTomatoesFactory.getMovie($scope.curMovie.title);
 		promise.then(function(movieInfo) {
-			$scope.rt = movieInfo;
 			$scope.profile.img= {'url' : movieInfo.movies[0].posters.original};
 //			$scope.setImg(movieInfo.movies[0].posters.original);
 		}, function(reason) {
@@ -72,15 +70,6 @@ app.controller('profileCtrl',function profileCtrl($scope, rottenTomatoesFactory,
 	});
 
 
-$( document ).ready(function() {
-var card=$('#card');
-console.log('ready');
-// $('#flip').click(function(){
-//   card.toggleClass('flipped');
-// });
-
-  });
-
 });
 
 app.controller( 'MovieListCtrl', function MovieListCtrl($scope, $location, $anchorScroll, xbmcFactory, rottenTomatoesFactory) {
@@ -94,6 +83,13 @@ app.controller( 'MovieListCtrl', function MovieListCtrl($scope, $location, $anch
 		$scope.setCurMovie(title);
 		$scope.selectedRow = idx;
 	};
+	$scope.togglePick=function(idx, title){
+		if($scope.glob.moviePicks[idx]){
+			delete $scope.glob.moviePicks[idx];
+		} else {
+			$scope.glob.moviePicks[idx] = title;
+		}
+	};
 	$scope.highlightMovie = function(idx) {
 		$scope.highlightedRow = idx;
 	};
@@ -101,14 +97,27 @@ app.controller( 'MovieListCtrl', function MovieListCtrl($scope, $location, $anch
 		$scope.highlightedRow = 'noHighlightedRow';
 	};
 	$scope.jumpToBM = function(bm){
-		if(bm == '#') { bm = 'firstMovie'; }
-		var pos = $( "."+bm).position().top - $('#movie0').position().top;
-		$('#movieList').animate( {scrollTop: pos}, 2500);
+		// set flag for scott
+		if(($scope.curMovie.title=='Admission' || $scope.curMovie.title=='Captain America: The First Avenger') && bm=='S'){
+			$scope.glob.scottPickins = true;
+		} else {
+		// jump to bookmark
+			$scope.curMovie.BM = bm;   // used for the Scott konami
+			if(bm == '#') { bm = 'firstMovie'; }
+			var pos = $( "."+bm).position().top - $('#movie0').position().top;
+			$('#movieList').animate( {scrollTop: pos}, 2500);
+		}
 	};
 	$scope.getFlags = function(xbmcId){
 		return $scope.cache[xbmcId] ? true : false;
 	};
 });
+
+app.controller( 'FooterCtrl', function FooterCtrl($scope) {
+
+});
+
+
 
 // services  ----------------------------------------------------------
 
@@ -143,7 +152,7 @@ app.factory('xbmcFactory', function($q, $http) {
 		getMovies: function(){
 			var deferred = $q.defer();
 			$http
-				.get('../xbmc/php/movies_2.json')
+				.get('php/movies_2.json')
 				.then(function(d){
 					var movieData = addBookmarks(d.data.result.movies);
 					deferred.resolve(angular.fromJson(movieData));
@@ -156,7 +165,7 @@ app.factory('xbmcFactory', function($q, $http) {
 		getMovieCache: function(){
 			var deferred = $q.defer();
 			$http
-				.get('../xbmc/php/movieCache.json')
+				.get('php/movieCache.json')
 				.then(function(d){
 					var movieCache =[];
 					$.each(d.data.result.movies, function(){				// convert json to associative array
@@ -184,7 +193,6 @@ app.factory('rottenTomatoesFactory', function ($q, $http) {
 					if(d.data.total == 0){
 						d.data.movies[0].posters.original = defaultImgURL;
 					}
-console.log(d.data.total);
 					deferred.resolve(d.data);
 				});
 			return deferred.promise;

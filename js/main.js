@@ -1,4 +1,5 @@
 $(function(){
+
 });
 
 var app = angular.module('NowPlaying', []);

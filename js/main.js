@@ -3,8 +3,8 @@ $(function(){
 });
 
 var app = angular.module('NowPlaying', []);
-
 var defaultImgURL = 'http://4.bp.blogspot.com/-hIirVYTQFRs/TwdWvcq55uI/AAAAAAAACt8/3frSkQULrn4/s320/film-reel.jpg';
+var myFirebase = 'https://boiling-fire-3340.firebaseio.com/movies/';
 
 // controllers ----------------------------------------------------------
 
@@ -13,6 +13,7 @@ app.controller('mainCtrl', function mainCtrl($scope, xbmcFactory, tmdbFactory, c
 	$scope.glob = {};
 	$scope.glob.moviePicks = [];
 	$scope.glob.scottPickins = true;  // used for the Scott konami
+	$scope.glob.username = 'scott';
 	$scope.curMovie = {};
 	$scope.curMovie.title = '';
 	$scope.curMovie.idx = 0;
@@ -72,8 +73,9 @@ app.controller('profileCtrl',function profileCtrl($scope, rottenTomatoesFactory,
 
 });
 
-app.controller( 'MovieListCtrl', function MovieListCtrl($scope, $location, $anchorScroll, xbmcFactory, rottenTomatoesFactory) {
+app.controller( 'MovieListCtrl', function MovieListCtrl($scope, $location, $anchorScroll, xbmcFactory, rottenTomatoesFactory, movieListFactory) {
 	xbmcFactory.setupBookmarks($scope);
+	movieListFactory.createMovieDB('scott');
 
 	var promise = xbmcFactory.getMovies();
 	promise.then(function(movieData){
@@ -85,8 +87,10 @@ app.controller( 'MovieListCtrl', function MovieListCtrl($scope, $location, $anch
 	};
 	$scope.togglePick=function(idx, title){
 		if($scope.glob.moviePicks[idx]){
+			movieListFactory.removeMovie({user: $scope.glob.username, title: title, idx: idx});
 			delete $scope.glob.moviePicks[idx];
 		} else {
+			movieListFactory.addMovie({user: $scope.glob.username, title: title, idx: idx});
 			$scope.glob.moviePicks[idx] = title;
 		}
 	};
@@ -100,6 +104,8 @@ app.controller( 'MovieListCtrl', function MovieListCtrl($scope, $location, $anch
 		// set flag for scott
 		if(($scope.curMovie.title=='Admission' || $scope.curMovie.title=='Captain America: The First Avenger') && bm=='S'){
 			$scope.glob.scottPickins = true;
+			$scope.glob.username = 'scott';
+			movieListFactory.createMovieDB('scott');
 		} else {
 		// jump to bookmark
 			$scope.curMovie.BM = bm;   // used for the Scott konami
@@ -117,8 +123,6 @@ app.controller( 'FooterCtrl', function FooterCtrl($scope) {
 
 });
 
-
-
 // services  ----------------------------------------------------------
 
 app.service('configuration', function(xbmcFactory, tmdbFactory) {
@@ -131,7 +135,7 @@ app.service('configuration', function(xbmcFactory, tmdbFactory) {
 		// get the xbmc list
 		var promise = xbmcFactory.getMovies();
 		promise.then(function(xbmcList){
-			$.each(xbmcList, function(){						// loope through the movies
+			$.each(xbmcList, function(){						// loop through the movies
 				configArr[this.movieId] = this;
 				var that = this;
 				if(i++ > 3){ return false; }
@@ -232,7 +236,21 @@ app.factory('tmdbFactory', function ($q, $http) {
 	};
 });
 
-
+app.factory('movieListFactory', function(){
+//	var fb = {};
+	var fb = new Firebase(myFirebase);
+	return {
+		createMovieDB: function(user){
+		},
+		removeMovie: function(data) {
+			var ref=new Firebase(myFirebase + data.user + '/' + data.idx);
+			ref.remove();
+		},
+		addMovie: function(data) {
+			fb.child(data.user + '/' + data.idx + '/title').set(data.title);
+		}
+	}
+});
 
 // directives ----------------------------------------------------------
 

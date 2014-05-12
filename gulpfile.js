@@ -31,7 +31,7 @@ gulp.task('watch', ['connect', 'serve'], function() {
 
 	gulp.watch('js/*.js', ['compress']);
 
-	gulp.watch(['dist/*.js','*.html', 'css/*.css']).on('change', function(file) {
+	gulp.watch(['dist/*.js','*.html','views/*.html', 'css/*.css']).on('change', function(file) {
 		server.changed(file.path);
 	});
 });

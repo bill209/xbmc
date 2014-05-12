@@ -9,10 +9,11 @@
 </head>
 
 <body ng-app="NowPlaying" ng-controller='mainCtrl'>
+
+
 	<div id='container'>
 		<img id='bigScreen' ng-src='{{img.url}}'>
  		<div id='profile' ng-include src="'views/profile.html'"></div>
- 		<div id='testclick'>flip</div>
 		<div id='movieListBox'  ng-controller="MovieListCtrl">
 			<div id='movieListWell' class='well trans80'>
 				<ul id='bookmarks'>
@@ -56,6 +57,6 @@
 	<script src='js/main.js'></script>
 	<script src='js/functions.js'></script>
 	<script src="https://cdn.firebase.com/v0/firebase.js"></script>
-	<script src="https://cdn.firebase.com/libs/angularfire/0.7.1/angularfire.min.js"></script><!-- x -->
+	<script src="https://cdn.firebase.com/libs/angularfire/0.7.1/angularfire.min.js"></script>
 </body>
 </html>

@@ -1,5 +1,13 @@
 // functions  ----------------------------------------------------------
 
+function convertFbToMl(fb){
+	var obj = {};
+	for(var key in fb){
+		obj[fb[key].idx] = {'fbIdx':key,'title':fb[key].title};
+	}
+	return obj;
+};
+
 // adds the bookmard field to the movie array, the value of which is the first letter of the film for the first film with that starting letter
 // note: the first film has a bookmark value of 'firstMovie';
 function addBookmarks(movieJson){

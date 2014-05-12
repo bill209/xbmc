@@ -1,5 +1,4 @@
 $(function(){
-
 });
 
 var app = angular.module('NowPlaying', []);
@@ -8,12 +7,14 @@ var myFirebase = 'https://boiling-fire-3340.firebaseio.com/movies/';
 
 // controllers ----------------------------------------------------------
 
-app.controller('mainCtrl', function mainCtrl($scope, xbmcFactory, tmdbFactory, configuration){
+app.controller('mainCtrl', function mainCtrl($scope, xbmcFactory, tmdbFactory, movieListFactory, configuration){
 
 	$scope.glob = {};
-	$scope.glob.moviePicks = [];
-	$scope.glob.scottPickins = true;  // used for the Scott konami
+	$scope.glob.fbMovies = {};
+	$scope.glob.moviePicks = {};
+	$scope.glob.scottPickins = false;  // used for the Scott konami
 	$scope.glob.username = 'scott';
+	$scope.glob.flipped = false;
 	$scope.curMovie = {};
 	$scope.curMovie.title = '';
 	$scope.curMovie.idx = 0;
@@ -24,32 +25,54 @@ app.controller('mainCtrl', function mainCtrl($scope, xbmcFactory, tmdbFactory, c
 // reset the following to a button
 	configuration.initialize();
 
+	$scope.$watch('glob.scottPickins', function() {
+		console.log('hey, sp has changed!');
+		if($scope.glob.scottPickins){
+			$scope.loadFbMovies();
+		}
+	});
+
 	$scope.setCurMovie = function(title) {
 		$scope.curMovie.title = title;
 	};
 	$scope.setImg = function(url) {
 		$scope.img.url = url;
 	};
+	$scope.getMovieList = function(){
+		var promise = movieListFactory.getSelectedMovies($scope.glob.username);
+		promise.then(function(movieList) {
+			$scope.glob.fbMovies = movieList;
+		}, function(reason) {
+			alert('Failed: ' + reason);
+		});
+	};
+	$scope.loadFbMovies = function(){
+		var promise = movieListFactory.getSelectedMovies($scope.glob.username);
+		promise.then(function(movieList) {
+			$scope.glob.fbMovies = movieList;
+			$scope.glob.moviePicks = movieList;
+		}, function(reason) {
+			alert('Failed: ' + reason);
+		});
+	};
 	var promise = xbmcFactory.getMovieCache();
 	promise.then(function(movieCache){
 		$scope.cache = movieCache;
 	});
+
 });
 
-app.controller('profileCtrl',function profileCtrl($scope, rottenTomatoesFactory, tmdbFactory, xbmcFactory){
-
-	$scope.test = function(idx) {
-		console.log('test');
-		if($scope.flipper == 1){
-			$scope.flipper = 0;
-		} else {
-			$scope.flipper = 1;
-		}
-	};
+app.controller('profileCtrl',function profileCtrl($scope, rottenTomatoesFactory, tmdbFactory, xbmcFactory, movieListFactory){
 
 //	$scope.rt = {};
 	$scope.profile = {};
 	$scope.profile.img = {'url' : defaultImgURL};
+
+	$scope.removeMovie = function(idx, fbIdx){
+console.log('fbIdx',fbIdx);
+		delete $scope.glob.moviePicks[idx];
+		movieListFactory.removeMovie({user: $scope.glob.username, fbIdx: fbIdx});
+	};
 
 	$scope.$watch('curMovie.title', function(nv, ov) {
 		if(nv == ov) { return; }
@@ -69,8 +92,6 @@ app.controller('profileCtrl',function profileCtrl($scope, rottenTomatoesFactory,
 			alert('Failed: ' + reason);
 		});
 	});
-
-
 });
 
 app.controller( 'MovieListCtrl', function MovieListCtrl($scope, $location, $anchorScroll, xbmcFactory, rottenTomatoesFactory, movieListFactory) {
@@ -87,11 +108,12 @@ app.controller( 'MovieListCtrl', function MovieListCtrl($scope, $location, $anch
 	};
 	$scope.togglePick=function(idx, title){
 		if($scope.glob.moviePicks[idx]){
-			movieListFactory.removeMovie({user: $scope.glob.username, title: title, idx: idx});
+			movieListFactory.removeMovie({user: $scope.glob.username, fbIdx: $scope.glob.moviePicks[idx].fbIdx});
 			delete $scope.glob.moviePicks[idx];
 		} else {
-			movieListFactory.addMovie({user: $scope.glob.username, title: title, idx: idx});
-			$scope.glob.moviePicks[idx] = title;
+			var id = movieListFactory.addMovie({user: $scope.glob.username, title: title, idx: idx});
+console.log('id',id);
+			$scope.glob.moviePicks[idx] = {'fbIdx':id, 'title':title};
 		}
 	};
 	$scope.highlightMovie = function(idx) {
@@ -224,30 +246,32 @@ app.factory('tmdbFactory', function ($q, $http) {
 		getImagePath: function(){
 			return 'http://d3gtl9l2a4fn1j.cloudfront.net/t/p/original/';
 		},
-		addTmdbToXbmc: function(xbmcList){
-			var deferred = $q.defer();
-			$.each(xbmcList, function(){
-				var promise = tmdbFactory.getMovie('taken');
-				promise.then(function(d){
-				});
-				getMovie('taken');
-			});
-		}
 	};
 });
 
-app.factory('movieListFactory', function(){
-//	var fb = {};
+app.factory('movieListFactory', function ($q, $http) {
 	var fb = new Firebase(myFirebase);
 	return {
 		createMovieDB: function(user){
 		},
 		removeMovie: function(data) {
-			var ref=new Firebase(myFirebase + data.user + '/' + data.idx);
+			var ref=new Firebase(myFirebase + data.user + '/' + data.fbIdx);
 			ref.remove();
 		},
 		addMovie: function(data) {
-			fb.child(data.user + '/' + data.idx + '/title').set(data.title);
+			var ref=new Firebase(myFirebase + data.user );
+			newRef = ref.push({'idx':data.idx,'title':data.title});
+			return newRef.name();
+		},
+		getSelectedMovies: function(username){
+			var deferred = $q.defer();
+			$http
+				.get(myFirebase + username + '.json')
+				.then(function(d){
+					var obj = convertFbToMl(d.data);
+					deferred.resolve(obj);
+				});
+			return deferred.promise;
 		}
 	}
 });

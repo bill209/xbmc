@@ -1,11 +1,18 @@
 <div class='test flip' ng-controller= 'profileCtrl' >
-	<div class='card'>
+	<div class='card' ng-class="{'flipped': glob.flipped}">
 		<div class='face front'>
 			<img ng-src='{{profile.img.url}}' class="image">
 		</div>
-		<div class='face back'>
-			<img src='http://content8.flixster.com/movie/11/17/21/11172178_ori.jpg' class="image">
+		<div class='face back trans80' >
+			<ul id='selectedMovieList'>
+				<li ng-repeat='(idx, movie) in glob.moviePicks'><span ng-click='removeMovie(idx,movie.fbIdx)'>--remove--</span>{{movie.title}}</li>
+			</ul>
 		</div>
 	</div>
+	<p id='controls'>
+		<span id='testclick' ng-click="glob.flipped = !glob.flipped">flip</span>
+<!-- 		<span ng-click='getMovieList()'>get movie list</span> -->
+		<span ng-click='loadFbMovies()'>load movies</span>
+	</p>
 </div>
 

@@ -37,6 +37,11 @@ border-radius: 8px;
 
 #movieList li { width: 400px; background-color: #888; height: 40px; line-height: 38px;  padding: 0 30px 0 15px; }
 .movieFlags { float: right; }
+#scrollUp { background-image: url('../images/chevron_up.png'); }
+#scrollDn { background-image: url('../images/chevron_dn.png'); }
+#scrollUp:hover { background-image: url('../images/chevron_up_on.png'); }
+#scrollDn:hover { background-image: url('../images/chevron_dn_on.png'); }
+
 .scottPick { float: right; width: 25px; height: 24px; margin-top: 7px;  cursor: pointer; }
 .scottPickTrue {  background: url('../images/ckCircle1.png') no-repeat -1px 0px; }
 .scottPickFalse { background: url('../images/ckCircle1.png') no-repeat -28px 0px; }
@@ -52,18 +57,19 @@ border-color: #428bca; }
 
 #movieList li.highlightedMovie { background-color: #eef; color: #666; }
 
-ul#selectedMovieList { list-style-type: none;}
+ul#selectedMovieList { list-style-type: none; height: 560px;  overflow: hidden; overflow-y: scroll; }
 ul#selectedMovieList li span {font-size: .8em; font-style: italic; color: #aaa; margin-right:  10px; cursor: pointer; }
-
 
 .activeRow{
 color: red;
 }
 
+#tmdbNotice { vertical-align: bottom; }
+
 #profile { position: absolute; right: 20px;  width: 400px; height: 500px; }
 #profile img { width: 400px; border-radius: 4; -moz-border-radius: 4px; border-radius: 4px; }
 #info { border: solid 1px #ddd; }
-.face.back { color: #ddd;  padding: 20px; background-color: #888; }
+.face.back { color: #ddd;  padding: 20px; background-color: #333; }
 
 p.viewport {
 	border-radius: 5px 5px 5px 5px ;

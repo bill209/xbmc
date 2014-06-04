@@ -5,14 +5,14 @@
 		</div>
 		<div class='face back trans80' >
 			<ul id='selectedMovieList'>
-				<li ng-repeat='(idx, movie) in glob.moviePicks'><span ng-click='removeMovie(idx,movie.fbIdx)'>--remove--</span>{{movie.title}}</li>
+				<li ng-repeat='(idx, movie) in glob.moviePicks'><span ng-click='removeMovie(idx,movie.fbIdx)'>--remove--</span>{{movie.title | cut:true:35:' ...'}}</li>
 			</ul>
 		</div>
 	</div>
 	<p id='controls'>
-		<span id='testclick' ng-click="glob.flipped = !glob.flipped">flip</span>
+		<span id='flipIt' ng-click="glob.flipped = !glob.flipped;flipIt();">my movies</span>
 <!-- 		<span ng-click='getMovieList()'>get movie list</span> -->
-		<span ng-click='loadFbMovies()'>load movies</span>
+<!-- 		<span ng-click='loadFbMovies()'>load movies</span> -->
 	</p>
 </div>
 

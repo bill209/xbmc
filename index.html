@@ -29,25 +29,25 @@
 							ng-class='{activeMovie: $index==selectedRow, highlightedMovie: $index==highlightedRow}'
 							ng-mouseenter='highlightMovie($index)'
 							my-select-first-movie>
-							{{movie.title}}
+							{{movie.title  | cut:true:45:' ...'}}
 							<span 	class='scottPick'
 									ng-show='glob.scottPickins'
 									ng-class="{true: 'scottPickTrue', false: 'scottPickFalse'}[glob.moviePicks[$index] != undefined]"
 									ng-click='togglePick($index, movie.title)'>
 							</span>
-							<span class='movieFlags' ng-show="getFlags(movie.movieId)">*</span>
+<!-- 							<span class='movieFlags' ng-show="getFlags(movie.movieId)">*</span> -->
 						</li>
 					</ul>
 				</div>
 
 				<div id="scrollBox">
-					<div id="scrollUp">up</div>
-					<div id="scrollDn">dn</div>
+					<div id="scrollUp">&nbsp;</div>
+					<div id="scrollDn">&nbsp;</div>
 				</div>
 			</div>
 		</div>
 		<div id='footerWell' class='well trans80' ng-controller="FooterCtrl">
-			<footer ng-class='{scott:glob.scottPickins==true}'>This product uses the TMDb API but is not endorsed or certified by TMDb.<img src='images/tmdb_sm.png'/></footer>
+			<footer ng-class='{scott:glob.scottPickins==true}'><span id='tmdbNotice'>This product uses the TMDb API but is not endorsed or certified by TMDb.</span><img src='images/tmdb_sm.png'/></footer>
 		</div>
 	</div>
 

@@ -3,8 +3,8 @@ $(function(){
 
 var app = angular.module('NowPlaying', []);
 var defaultImgURL = 'http://4.bp.blogspot.com/-hIirVYTQFRs/TwdWvcq55uI/AAAAAAAACt8/3frSkQULrn4/s320/film-reel.jpg';
+var defaultProfileImg = 'images/movie_reel.png';
 var myFirebase = 'https://boiling-fire-3340.firebaseio.com/movies/';
-
 // controllers ----------------------------------------------------------
 
 app.controller('mainCtrl', function mainCtrl($scope, xbmcFactory, tmdbFactory, movieListFactory, configuration){
@@ -13,7 +13,7 @@ app.controller('mainCtrl', function mainCtrl($scope, xbmcFactory, tmdbFactory, m
 	$scope.glob.fbMovies = {};
 	$scope.glob.moviePicks = {};
 	$scope.glob.scottPickins = false;  // used for the Scott konami
-	$scope.glob.username = 'scott';
+	$scope.glob.username = 'bill';
 	$scope.glob.flipped = false;
 	$scope.curMovie = {};
 	$scope.curMovie.title = '';
@@ -24,9 +24,12 @@ app.controller('mainCtrl', function mainCtrl($scope, xbmcFactory, tmdbFactory, m
 
 // reset the following to a button
 	configuration.initialize();
+	$scope.glob.username = ('user',configuration.setUser());
+	if($scope.glob.username){
+		$scope.glob.scottPickins = true;
+	}
 
 	$scope.$watch('glob.scottPickins', function() {
-		console.log('hey, sp has changed!');
 		if($scope.glob.scottPickins){
 			$scope.loadFbMovies();
 		}
@@ -66,14 +69,15 @@ app.controller('profileCtrl',function profileCtrl($scope, rottenTomatoesFactory,
 
 //	$scope.rt = {};
 	$scope.profile = {};
-	$scope.profile.img = {'url' : defaultImgURL};
+	$scope.profile.img = {'url' : defaultProfileImg};
 
 	$scope.removeMovie = function(idx, fbIdx){
-console.log('fbIdx',fbIdx);
 		delete $scope.glob.moviePicks[idx];
 		movieListFactory.removeMovie({user: $scope.glob.username, fbIdx: fbIdx});
 	};
-
+	$scope.flipIt = function(){
+//		$('ul#selectedMovieList').css('overflow-y','scroll');
+	};
 	$scope.$watch('curMovie.title', function(nv, ov) {
 		if(nv == ov) { return; }
 		// get rottentomatoes.com info
@@ -96,7 +100,6 @@ console.log('fbIdx',fbIdx);
 
 app.controller( 'MovieListCtrl', function MovieListCtrl($scope, $location, $anchorScroll, xbmcFactory, rottenTomatoesFactory, movieListFactory) {
 	xbmcFactory.setupBookmarks($scope);
-	movieListFactory.createMovieDB('scott');
 
 	var promise = xbmcFactory.getMovies();
 	promise.then(function(movieData){
@@ -112,7 +115,6 @@ app.controller( 'MovieListCtrl', function MovieListCtrl($scope, $location, $anch
 			delete $scope.glob.moviePicks[idx];
 		} else {
 			var id = movieListFactory.addMovie({user: $scope.glob.username, title: title, idx: idx});
-console.log('id',id);
 			$scope.glob.moviePicks[idx] = {'fbIdx':id, 'title':title};
 		}
 	};
@@ -124,10 +126,12 @@ console.log('id',id);
 	};
 	$scope.jumpToBM = function(bm){
 		// set flag for scott
-		if(($scope.curMovie.title=='Admission' || $scope.curMovie.title=='Captain America: The First Avenger') && bm=='S'){
+		if(($scope.curMovie.title=='Admission' || $scope.curMovie.title=='Captain America: The First Avenger') && bm == 'S'){
 			$scope.glob.scottPickins = true;
 			$scope.glob.username = 'scott';
-			movieListFactory.createMovieDB('scott');
+		} else if(($scope.curMovie.title=='Admission' || $scope.curMovie.title=='Jiro Dreams of Sushi') && bm == 'J'){
+			$scope.glob.scottPickins = true;
+			$scope.glob.username = 'josh';
 		} else {
 		// jump to bookmark
 			$scope.curMovie.BM = bm;   // used for the Scott konami
@@ -147,14 +151,14 @@ app.controller( 'FooterCtrl', function FooterCtrl($scope) {
 
 // services  ----------------------------------------------------------
 
-app.service('configuration', function(xbmcFactory, tmdbFactory) {
+app.service('configuration', function(xbmcFactory, tmdbFactory,$location) {
 	this.sayHello = function() {
 		return "Hello, World!";
 	};
 	this.initialize = function(){
 		var i = 0;
 		var configArr = [];
-		// get the xbmc list
+
 		var promise = xbmcFactory.getMovies();
 		promise.then(function(xbmcList){
 			$.each(xbmcList, function(){						// loop through the movies
@@ -169,6 +173,13 @@ app.service('configuration', function(xbmcFactory, tmdbFactory) {
 			});
 		});
 	};
+	this.setUser = function(){
+		if(location.search.indexOf('user=') != -1){
+		 	return location.search.slice(6);
+		} else {
+			return false;
+		}
+	};
 });
 
 // factories ----------------------------------------------------------
@@ -178,7 +189,7 @@ app.factory('xbmcFactory', function($q, $http) {
 		getMovies: function(){
 			var deferred = $q.defer();
 			$http
-				.get('php/movies_2.json')
+				.get('php/movies.json')
 				.then(function(d){
 					var movieData = addBookmarks(d.data.result.movies);
 					deferred.resolve(angular.fromJson(movieData));
@@ -252,8 +263,6 @@ app.factory('tmdbFactory', function ($q, $http) {
 app.factory('movieListFactory', function ($q, $http) {
 	var fb = new Firebase(myFirebase);
 	return {
-		createMovieDB: function(user){
-		},
 		removeMovie: function(data) {
 			var ref=new Firebase(myFirebase + data.user + '/' + data.fbIdx);
 			ref.remove();
@@ -268,7 +277,11 @@ app.factory('movieListFactory', function ($q, $http) {
 			$http
 				.get(myFirebase + username + '.json')
 				.then(function(d){
-					var obj = convertFbToMl(d.data);
+					if(d.data!=='null') {
+						var obj = convertFbToMl(d.data);
+					} else {
+						var obj = {};
+					}
 					deferred.resolve(obj);
 				});
 			return deferred.promise;
@@ -375,5 +388,32 @@ app.directive(
 
 	}
 );
+
+// this limits the number of characters displayed on the page
+// usage: {{some_text | cut:true:100:' ...'}}
+// options:  wordborders (boolean) - if true, cut only on word boundaries
+//			max (integer) - maximum length of string
+//			tail (string, default = '...') - add this string to any truncated text
+
+app.filter('cut', function () {
+        return function (value, wordwise, max, tail) {
+            if (!value) return '';
+
+            max = parseInt(max, 10);
+            if (!max) return value;
+            if (value.length <= max) return value;
+
+            value = value.substr(0, max);
+            if (wordwise) {
+                var lastspace = value.lastIndexOf(' ');
+                if (lastspace != -1) {
+                    value = value.substr(0, lastspace);
+                }
+            }
+
+            return value + (tail || ' …');
+        };
+    });
+
 
 

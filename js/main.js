@@ -174,8 +174,8 @@ app.service('configuration', function(xbmcFactory, tmdbFactory,$location) {
 		});
 	};
 	this.setUser = function(){
-		if(location.search.indexOf('user=') != -1){
-		 	return location.search.slice(6);
+		if(location.search.indexOf('u=') != -1){
+		 	return location.search.slice(3);
 		} else {
 			return false;
 		}

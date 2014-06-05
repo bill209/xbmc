@@ -11,6 +11,7 @@
 	</div>
 	<p id='controls'>
 		<span id='flipIt' ng-click="glob.flipped = !glob.flipped;flipIt();">my movies</span>
+		<span ng-click="openTMDB(tmdb.movieInfo.id)" ng-show='tmdb.movieInfo.id > 0'>tmdb</span>
 <!-- 		<span ng-click='getMovieList()'>get movie list</span> -->
 <!-- 		<span ng-click='loadFbMovies()'>load movies</span> -->
 	</p>

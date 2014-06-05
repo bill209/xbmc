@@ -20,7 +20,9 @@ app.controller('mainCtrl', function mainCtrl($scope, xbmcFactory, tmdbFactory, m
 	$scope.curMovie.idx = 0;
 	$scope.img = {};
 	$scope.img = {'url' : defaultImgURL};
-	$scope.tmdbImgPath = tmdbFactory.getImagePath();
+	$scope.tmdb = {};
+	$scope.tmdb.movieInfo = {};
+	$scope.tmdb.imgPath = tmdbFactory.getImagePath();
 
 // reset the following to a button
 	configuration.initialize();
@@ -78,6 +80,9 @@ app.controller('profileCtrl',function profileCtrl($scope, rottenTomatoesFactory,
 	$scope.flipIt = function(){
 //		$('ul#selectedMovieList').css('overflow-y','scroll');
 	};
+	$scope.openTMDB = function(movieId){
+		window.open("http://www.themoviedb.org/movie/" + movieId,"tmdb");
+	};
 	$scope.$watch('curMovie.title', function(nv, ov) {
 		if(nv == ov) { return; }
 		// get rottentomatoes.com info
@@ -88,10 +93,10 @@ app.controller('profileCtrl',function profileCtrl($scope, rottenTomatoesFactory,
 		}, function(reason) {
 			alert('Failed: ' + reason);
 		});
-
 		var promise2 = tmdbFactory.getMovie($scope.curMovie.title);
 		promise2.then(function(movieInfo) {
-			$scope.setImg($scope.tmdbImgPath + movieInfo.results[0].poster_path);
+			$scope.tmdb.movieInfo = movieInfo.results[0];
+			$scope.setImg($scope.tmdb.imgPath + movieInfo.results[0].poster_path);
 		}, function(reason) {
 			alert('Failed: ' + reason);
 		});
@@ -245,6 +250,7 @@ app.factory('tmdbFactory', function ($q, $http) {
 	};
 	return {
 		getMovie: function(movie) {
+console.log('movie',movie);
 			var deferred = $q.defer();
 			var findMovie = tmdbLinks.getMovieByName.replace('[movietitle]', movie.replace(' ','+'));
 			$http

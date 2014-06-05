@@ -60,7 +60,6 @@
 						return $http
 							.jsonp('http://api.rottentomatoes.com/api/public/v1.0/lists/movies/in_theaters.json?callback=JSON_CALLBACK&apikey=723yhcv78vu2ut757tp63yjg')
 							.success(function(data) {
-console.log(data);
 								/*
 								 * let's check to see if there are any saved movies.
 								 * if there are, we'll want to indicate that the movie

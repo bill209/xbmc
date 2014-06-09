@@ -77,9 +77,6 @@ app.controller('profileCtrl',function profileCtrl($scope, rottenTomatoesFactory,
 		delete $scope.glob.moviePicks[idx];
 		movieListFactory.removeMovie({user: $scope.glob.username, fbIdx: fbIdx});
 	};
-	$scope.flipIt = function(){
-//		$('ul#selectedMovieList').css('overflow-y','scroll');
-	};
 	$scope.openTMDB = function(movieId){
 		window.open("http://www.themoviedb.org/movie/" + movieId,"tmdb");
 	};

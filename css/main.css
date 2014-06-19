@@ -71,6 +71,7 @@ color: red;
 #info { border: solid 1px #ddd; }
 .face.back { color: #ddd;  padding: 20px; background-color: #333; }
 .face.front img { max-height: 600px; }
+.face.back.kellygreen { color: #DB5DEC; background-color: #89E541; }
 
 p.viewport {
 	border-radius: 5px 5px 5px 5px ;

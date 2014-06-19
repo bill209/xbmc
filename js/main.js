@@ -13,8 +13,9 @@ app.controller('mainCtrl', function mainCtrl($scope, xbmcFactory, tmdbFactory, m
 	$scope.glob.fbMovies = {};
 	$scope.glob.moviePicks = {};
 	$scope.glob.scottPickins = false;  // used for the Scott konami
-	$scope.glob.username = 'bill';
+	$scope.glob.username = '';
 	$scope.glob.flipped = false;
+	$scope.glob.opacity = true;
 	$scope.curMovie = {};
 	$scope.curMovie.title = '';
 	$scope.curMovie.idx = 0;
@@ -158,6 +159,9 @@ app.controller( 'MovieListCtrl', function MovieListCtrl($scope, $location, $anch
 });
 
 app.controller( 'FooterCtrl', function FooterCtrl($scope) {
+	$scope.toggleOpacity=function(){
+		$scope.glob.opacity = !$scope.glob.opacity;
+	};
 
 });
 
@@ -213,6 +217,8 @@ app.factory('xbmcFactory', function($q, $http) {
 				.get('php/movies.json')
 				.then(function(d){
 					var movieData = addBookmarks(d.data.result.movies);
+// var newMovieIdx = movieData.length;
+// movieData[newMovieIdx] = { 'bookmark' : '', 'idx' : '0', 'movieId' : '0' , 'title' : 'scotts special movie' }
 					deferred.resolve(angular.fromJson(movieData));
 				});
 			return deferred.promise;

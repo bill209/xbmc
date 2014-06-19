@@ -15,12 +15,12 @@
 		<img id='bigScreen' ng-src='{{img.url}}'>
  		<div id='profile' ng-include src="'views/profile.html'"></div>
 		<div id='movieListBox'  ng-controller="MovieListCtrl">
-			<div id='movieListWell' class='well trans80'>
+			<div id='movieListWell' class='well' ng-class="{trans80: glob.opacity}">
 				<ul id='bookmarks'>
 					<li ng-repeat='letter in alphabet' ><a href="" ng-click="jumpToBM(letter)">{{letter}}</a></li>
 				</ul>
 
-				<div id='innerWell' class='well trans80'>
+				<div id='innerWell' class='well'>
 					<ul id='movieList' ng-app="link" ng-mouseleave='leaveMovieList($index)'>
 						<li 	id="movie{{movie.idx}}"
 							class="list-group-item {{movie.bookmark }}"
@@ -47,7 +47,10 @@
 			</div>
 		</div>
 		<div id='footerWell' class='well trans80' ng-controller="FooterCtrl">
-			<footer ng-class='{scott:glob.scottPickins==true}'><span id='tmdbNotice'>This product uses the TMDb API but is not endorsed or certified by TMDb.</span><img src='images/tmdb_sm.png'/></footer>
+			<footer ng-class='{scott:glob.scottPickins==true}'>
+				<span id='tmdbNotice'>This product uses the TMDb API but is not endorsed or certified by TMDb.</span>
+				<img src='images/tmdb_sm.png' ng-click='toggleOpacity()'/>
+			</footer>
 		</div>
 	</div>
 

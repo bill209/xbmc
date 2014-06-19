@@ -3,9 +3,9 @@
 		<div class='face front'>
 			<img ng-src='{{profile.img.url}}' class="image">
 		</div>
-		<div class='face back trans80' ng-class="{true: 'kellygreen'}[glob.username == 'scott']">
+		<div class='face back trans80' ng-class="{true: 'kellygreen'}[glob.username == 'scottzzzz']">
 			<ul id='selectedMovieList'>
-				<li ng-repeat='(idx, movie) in glob.moviePicks'><span ng-click='removeMovie(idx,movie.fbIdx)'>-remove--</span>{{movie.title | cut:true:35:' ...'}}</li>
+				<li ng-repeat='(idx, movie) in glob.moviePicks'><span ng-click='removeMovie(idx,movie.fbIdx)'>--remove--</span>{{movie.title | cut:true:35:' ...'}}</li>
 			</ul>
 		</div>
 	</div>

@@ -161,7 +161,6 @@ app.controller( 'MovieListCtrl', function MovieListCtrl($scope, $location, $anch
 app.controller( 'FooterCtrl', function FooterCtrl($scope) {
 	$scope.toggleOpacity=function(){
 		$scope.glob.opacity = !$scope.glob.opacity;
-console.log('$scope.glob.opacitty',$scope.glob.opacity);
 	};
 
 });

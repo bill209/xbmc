@@ -26,6 +26,7 @@ app.controller('mainCtrl', function mainCtrl($scope, xbmcFactory, tmdbFactory, m
 
 // reset the following to a button
 	configuration.initialize();
+	$scope.glob.posterURLs = configuration.loadPosterURLs();
 	$scope.glob.username = ('user',configuration.setUser());
 	if($scope.glob.username){
 		$scope.glob.scottPickins = true;
@@ -73,6 +74,15 @@ app.controller('profileCtrl',function profileCtrl($scope, rottenTomatoesFactory,
 	$scope.profile = {};
 	$scope.profile.img = {'url' : defaultProfileImg};
 
+// var p = rottenTomatoesFactory.loadPosterURLs();
+// p.then(function(posters){
+// console.log('p then');
+// 		$scope.profile.localPostersURL = posters;
+// 		console.log('posters',posters);
+// 	}, function(reason) {
+// 		alert('Failed: ' + reason);
+// 	}
+// );
 	$scope.removeMovie = function(idx, fbIdx){
 		delete $scope.glob.moviePicks[idx];
 		movieListFactory.removeMovie({user: $scope.glob.username, fbIdx: fbIdx});
@@ -153,7 +163,7 @@ app.controller( 'FooterCtrl', function FooterCtrl($scope) {
 
 // services  ----------------------------------------------------------
 
-app.service('configuration', function(xbmcFactory, tmdbFactory,$location) {
+app.service('configuration', function(xbmcFactory, tmdbFactory, rottenTomatoesFactory, $location) {
 	this.sayHello = function() {
 		return "Hello, World!";
 	};
@@ -181,6 +191,15 @@ app.service('configuration', function(xbmcFactory, tmdbFactory,$location) {
 		} else {
 			return false;
 		}
+	};
+	this.loadPosterURLs = function(){
+		var promise = rottenTomatoesFactory.loadPosterURLs();
+		promise.then(function(posters){
+				return posters;
+			}, function(reason) {
+				alert('Failed: ' + reason);
+			}
+		);
 	};
 });
 
@@ -235,10 +254,18 @@ app.factory('rottenTomatoesFactory', function ($q, $http) {
 					deferred.resolve(d.data);
 				});
 			return deferred.promise;
-		}
+		},
+		loadPosterURLs: function(movie) {
+			var deferred = $q.defer();
+			$http
+				.get('php/posters.json')
+				.then(function(d) {
+					deferred.resolve(d.data);
+				});
+			return deferred.promise;
+		},
 	};
 });
-
 app.factory('tmdbFactory', function ($q, $http) {
 	var APIKEY =  '829f2c4b8c9c5304ea86fc7cf47b1053';
 	var tmdbLinks = {
@@ -247,7 +274,6 @@ app.factory('tmdbFactory', function ($q, $http) {
 	};
 	return {
 		getMovie: function(movie) {
-console.log('movie',movie);
 			var deferred = $q.defer();
 			var findMovie = tmdbLinks.getMovieByName.replace('[movietitle]', movie.replace(' ','+'));
 			$http

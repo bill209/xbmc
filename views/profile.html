@@ -5,7 +5,7 @@
 		</div>
 		<div class='face back trans80' ng-class="{true: 'kellygreen'}[glob.username == 'scott']">
 			<ul id='selectedMovieList'>
-				<li ng-repeat='(idx, movie) in glob.moviePicks'><span ng-click='removeMovie(idx,movie.fbIdx)'>{{glob.username}}--remove--</span>{{movie.title | cut:true:35:' ...'}}</li>
+				<li ng-repeat='(idx, movie) in glob.moviePicks'><span ng-click='removeMovie(idx,movie.fbIdx)'>-remove--</span>{{movie.title | cut:true:35:' ...'}}</li>
 			</ul>
 		</div>
 	</div>

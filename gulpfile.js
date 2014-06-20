@@ -21,7 +21,7 @@ gulp.task('serve', ['connect'], function() {
 
 gulp.task('compress', function(){
 	return gulp.src('js/*.js')
-		.pipe(uglify({mangle:false}))
+//		.pipe(uglify({mangle:false}))
 		.pipe(gulp.dest('dist'));
 });
 

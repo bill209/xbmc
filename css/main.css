@@ -57,7 +57,7 @@ border-color: #428bca; }
 
 #movieList li.highlightedMovie { background-color: #eef; color: #666; }
 
-ul#selectedMovieList { list-style-type: none; height: 560px;  overflow: hidden; overflow-y: scroll; }
+ul#selectedMovieList { list-style-type: none; height: 560px;  overflow: hidden; overflow-y: scroll; padding-left: 10px; }
 ul#selectedMovieList li span {font-size: .8em; font-style: italic; color: #aaa; margin-right:  10px; cursor: pointer; }
 
 .activeRow{

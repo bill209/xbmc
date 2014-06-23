@@ -8,7 +8,7 @@ var myFirebase = 'https://boiling-fire-3340.firebaseio.com/movies/';
 // controllers ----------------------------------------------------------
 
 app.controller('mainCtrl', function mainCtrl($scope, xbmcFactory, tmdbFactory, movieListFactory, configuration){
-
+var x = 1111233;
 	$scope.glob = {};
 	$scope.glob.fbMovies = {};
 	$scope.glob.moviePicks = {};

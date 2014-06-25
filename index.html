@@ -6,13 +6,14 @@
 	<link rel="stylesheet" href="js/libs/bootstrap/css/bootstrap.min.css">
 	<link rel="stylesheet" href="css/main.css">
 	<link rel="stylesheet" href="css/flip.css">
+	<link rel="stylesheet" href="css/r.css">
 </head>
 
 <body ng-app="NowPlaying" ng-controller='mainCtrl'>
 
 
-	<div id='container'>
-		<img id='bigScreen' ng-src='{{img.url}}'>
+	<div id='container' ng-style="{'background-image': 'url(' + img.url + ')'}">
+<!--		<img id='bigScreen' ng-src='{{img.url}}'> -->
  		<div id='profile' ng-include src="'views/profile.html'"></div>
 		<div id='movieListBox'  ng-controller="MovieListCtrl">
 			<div id='movieListWell' class='well' ng-class="{trans80: glob.opacity}">

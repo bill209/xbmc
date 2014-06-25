@@ -6,8 +6,13 @@ var defaultImgURL = 'http://4.bp.blogspot.com/-hIirVYTQFRs/TwdWvcq55uI/AAAAAAAAC
 var defaultProfileImg = 'images/movie_reel.png';
 var myFirebase = 'https://boiling-fire-3340.firebaseio.com/movies/';
 // controllers ----------------------------------------------------------
+window.document.onload = function(e){
 
-app.controller('mainCtrl', function mainCtrl($scope, xbmcFactory, tmdbFactory, movieListFactory, configuration){
+};
+
+// at the bottom of your controller
+
+app.controller('mainCtrl', function mainCtrl($scope, xbmcFactory, tmdbFactory, firebaseFactory, configuration){
 var x = 1111233;
 	$scope.glob = {};
 	$scope.glob.fbMovies = {};
@@ -46,7 +51,7 @@ var x = 1111233;
 		$scope.img.url = url;
 	};
 	$scope.getMovieList = function(){
-		var promise = movieListFactory.getSelectedMovies($scope.glob.username);
+		var promise = firebaseFactory.getSelectedMovies($scope.glob.username);
 		promise.then(function(movieList) {
 			$scope.glob.fbMovies = movieList;
 		}, function(reason) {
@@ -54,7 +59,7 @@ var x = 1111233;
 		});
 	};
 	$scope.loadFbMovies = function(){
-		var promise = movieListFactory.getSelectedMovies($scope.glob.username);
+		var promise = firebaseFactory.getSelectedMovies($scope.glob.username);
 		promise.then(function(movieList) {
 			$scope.glob.fbMovies = movieList;
 			$scope.glob.moviePicks = movieList;
@@ -69,7 +74,7 @@ var x = 1111233;
 
 });
 
-app.controller('profileCtrl',function profileCtrl($scope, rottenTomatoesFactory, tmdbFactory, xbmcFactory, movieListFactory){
+app.controller('profileCtrl',function profileCtrl($scope, rottenTomatoesFactory, tmdbFactory, xbmcFactory, firebaseFactory){
 
 //	$scope.rt = {};
 	$scope.profile = {};
@@ -86,7 +91,7 @@ app.controller('profileCtrl',function profileCtrl($scope, rottenTomatoesFactory,
 // );
 	$scope.removeMovie = function(idx, fbIdx){
 		delete $scope.glob.moviePicks[idx];
-		movieListFactory.removeMovie({user: $scope.glob.username, fbIdx: fbIdx});
+		firebaseFactory.removeMovie({user: $scope.glob.username, fbIdx: fbIdx});
 	};
 	$scope.openTMDB = function(movieId){
 		window.open("http://www.themoviedb.org/movie/" + movieId,"tmdb");
@@ -96,7 +101,9 @@ app.controller('profileCtrl',function profileCtrl($scope, rottenTomatoesFactory,
 		// get rottentomatoes.com info
 		var promise = rottenTomatoesFactory.getMovie($scope.curMovie.title);
 		promise.then(function(movieInfo) {
-			$scope.profile.img= {'url' : movieInfo.movies[0].posters.original};
+			// NOTE*** rottentomatoes api started returning all thumbnails!   6/23/2014
+			// NOTE*** now grabbing profile pic from tmdb
+//			$scope.profile.img= {'url' : movieInfo.movies[0].posters.original};
 //			$scope.setImg(movieInfo.movies[0].posters.original);
 		}, function(reason) {
 			alert('Failed: ' + reason);
@@ -104,14 +111,16 @@ app.controller('profileCtrl',function profileCtrl($scope, rottenTomatoesFactory,
 		var promise2 = tmdbFactory.getMovie($scope.curMovie.title);
 		promise2.then(function(movieInfo) {
 			$scope.tmdb.movieInfo = movieInfo.results[0];
-			$scope.setImg($scope.tmdb.imgPath + movieInfo.results[0].poster_path);
+			$scope.profile.img = {'url' : $scope.tmdb.imgPath + movieInfo.results[0].poster_path};
+			$scope.setImg($scope.tmdb.imgPath + movieInfo.results[0].backdrop_path);
 		}, function(reason) {
 			alert('Failed: ' + reason);
 		});
 	});
 });
 
-app.controller( 'MovieListCtrl', function MovieListCtrl($scope, $location, $anchorScroll, xbmcFactory, rottenTomatoesFactory, movieListFactory) {
+app.controller( 'MovieListCtrl', function MovieListCtrl($scope, $location, $anchorScroll, xbmcFactory, rottenTomatoesFactory, firebaseFactory) {
+
 	xbmcFactory.setupBookmarks($scope);
 
 	var promise = xbmcFactory.getMovies();
@@ -124,10 +133,10 @@ app.controller( 'MovieListCtrl', function MovieListCtrl($scope, $location, $anch
 	};
 	$scope.togglePick=function(idx, title){
 		if($scope.glob.moviePicks[idx]){
-			movieListFactory.removeMovie({user: $scope.glob.username, fbIdx: $scope.glob.moviePicks[idx].fbIdx});
+			firebaseFactory.removeMovie({user: $scope.glob.username, fbIdx: $scope.glob.moviePicks[idx].fbIdx});
 			delete $scope.glob.moviePicks[idx];
 		} else {
-			var id = movieListFactory.addMovie({user: $scope.glob.username, title: title, idx: idx});
+			var id = firebaseFactory.addMovie({user: $scope.glob.username, title: title, idx: idx});
 			$scope.glob.moviePicks[idx] = {'fbIdx':id, 'title':title};
 		}
 	};
@@ -190,11 +199,7 @@ app.service('configuration', function(xbmcFactory, tmdbFactory, rottenTomatoesFa
 		});
 	};
 	this.setUser = function(){
-		if(location.search.indexOf('u=') != -1){
-		 	return location.search.slice(3);
-		} else {
-			return false;
-		}
+		return getParameterByName('u');
 	};
 	this.loadPosterURLs = function(){
 		var promise = rottenTomatoesFactory.loadPosterURLs();
@@ -290,24 +295,27 @@ app.factory('tmdbFactory', function ($q, $http) {
 			return deferred.promise;
 		},
 		getImagePath: function(){
-			return 'http://d3gtl9l2a4fn1j.cloudfront.net/t/p/original/';
+			return 'http://image.tmdb.org/t/p/original';
+//			return 'http://d3gtl9l2a4fn1j.cloudfront.net/t/p/original';
 		},
 	};
 });
 
-app.factory('movieListFactory', function ($q, $http) {
-	var fb = new Firebase(myFirebase);
+app.factory('firebaseFactory', function ($q, $http) {
 	return {
 		removeMovie: function(data) {
+			var fb = new Firebase(myFirebase);
 			var ref=new Firebase(myFirebase + data.user + '/' + data.fbIdx);
 			ref.remove();
 		},
 		addMovie: function(data) {
+			var fb = new Firebase(myFirebase);
 			var ref=new Firebase(myFirebase + data.user );
 			newRef = ref.push({'idx':data.idx,'title':data.title});
 			return newRef.name();
 		},
 		getSelectedMovies: function(username){
+			var fb = new Firebase(myFirebase);
 			var deferred = $q.defer();
 			$http
 				.get(myFirebase + username + '.json')
@@ -333,9 +341,6 @@ app.directive('NOT_USED_mySelectFirstMovie', function() {
 		}
 	};
 });
-
-
-
 
 // I provide a "Fade" overlay for the primary image whenever
 // the primary image source changes. This allows for a "softer"
@@ -431,24 +436,24 @@ app.directive(
 //			tail (string, default = '...') - add this string to any truncated text
 
 app.filter('cut', function () {
-        return function (value, wordwise, max, tail) {
-            if (!value) return '';
+		return function (value, wordwise, max, tail) {
+			if (!value) return '';
 
-            max = parseInt(max, 10);
-            if (!max) return value;
-            if (value.length <= max) return value;
+			max = parseInt(max, 10);
+			if (!max) return value;
+			if (value.length <= max) return value;
 
-            value = value.substr(0, max);
-            if (wordwise) {
-                var lastspace = value.lastIndexOf(' ');
-                if (lastspace != -1) {
-                    value = value.substr(0, lastspace);
-                }
-            }
+			value = value.substr(0, max);
+			if (wordwise) {
+				var lastspace = value.lastIndexOf(' ');
+				if (lastspace != -1) {
+					value = value.substr(0, lastspace);
+				}
+			}
 
-            return value + (tail || ' …');
-        };
-    });
+			return value + (tail || ' …');
+		};
+	});
 
 
 

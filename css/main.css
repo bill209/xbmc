@@ -1,3 +1,4 @@
+html, body { height: 100%; }
 .hide { display: none; }
 
 figure {
@@ -5,7 +6,7 @@ figure {
 }
 #controls span { cursor: pointer;  color: #fff; margin-right: 20px; }
 
-body {  background-color: #333 }
+body {  background-color: #333; min-height: 730px; }
 ul { width: 400px; }
 ul li a { color: #ddd;  text-decoration: none; }
 
@@ -17,7 +18,8 @@ ul li a { color: #ddd;  text-decoration: none; }
   box-shadow:         0px 0px 15px 3px #666;
 }
 
-#container { padding: 20px;  width: 1000px; height: 810px; position: relative;  margin: 10px auto; overflow: hidden; }
+body { padding: 10px ;}
+#container { padding: 20px;  max-width: 1000px; height: calc(100% - 20px); min-height: 540px; position: relative;  margin: 10px auto; overflow: hidden; background: url(img_flwr.gif); background-size: cover; background-repeat: no-repeat; background-position: right; }
 #bigScreen { position: absolute; top: 0; left: 0;  min-width: 1000px;  min-height: 851px; z-index: -1;
 /* opacity:0.4; filter:alpha(opacity=40); */
 /* For IE8 and earlier */
@@ -29,11 +31,21 @@ border-radius: 8px;
 #bookmarks { height: 25px; padding: 2px 0 0 2px; border: solid 1px #aaa; width: 480px; text-align: center; }
 #bookmarks li { width: 18px; float: left; list-style-type: none; }
 
-#movieListWell { height: 685px; width: 520px; overflow: hidden; overflow-y: scroll; border: solid 1px #aaa;  background-color: #333;}
-#innerWell { float: right; height: 615px; width: 400px; padding: 0; margin: 0; border: solid 1px #333; overflow: hidden; background-color: #333; }
+#movieListBox { height: calc(100% - 95px); width: calc(.55 * (100% - 30px)); min-width: 365px; }
+#movieListWell { height: 100%; width: 100%; overflow: hidden; overflow-y: scroll; border: solid 1px #aaa;  background-color: #333;}
+#innerWell {
+	float: right;
+	height: calc(100% - 28px);
+	width: 400px;
+	padding: 0;
+	margin: 0;
+	border: solid 1px #333;
+	overflow: hidden;
+	background-color: #333;
+}
 
 /* height is 3px more in order to keep the scrollDn from endlessly looping on the last row */
-#movieList { position: relative; width: 400px; height: 618px;  overflow: hidden; overflow-y: scroll; padding: 0px; margin-bottom: 20px; }
+#movieList { position: relative; width: 400px; height: 100%;  overflow: hidden; overflow-y: scroll; padding: 0px; margin: 0px; }
 
 #movieList li { width: 400px; background-color: #888; height: 40px; line-height: 38px;  padding: 0 30px 0 15px; }
 .movieFlags { float: right; }
@@ -46,9 +58,9 @@ border-radius: 8px;
 .scottPickTrue {  background: url('../images/ckCircle1.png') no-repeat -1px 0px; }
 .scottPickFalse { background: url('../images/ckCircle1.png') no-repeat -28px 0px; }
 
-#scrollBox { float: left; height: 600px; }
+#scrollBox { float: left; height: calc(100% - 30px); position: relative; }
 #scrollBox div { width: 60px; height: 160px; border: solid 1px #ddd; }
-#scrollDn { margin-top: 280px; }
+#scrollDn { margin-top: 280px; position: absolute; left: 0; bottom: 0;}
 
 #movieList li.activeMovie {
 color: #ffffff;
@@ -57,7 +69,7 @@ border-color: #428bca; }
 
 #movieList li.highlightedMovie { background-color: #eef; color: #666; }
 
-ul#selectedMovieList { list-style-type: none; height: 560px;  overflow: hidden; overflow-y: scroll; }
+ul#selectedMovieList { list-style-type: none; height: 560px;  overflow: hidden; overflow-y: scroll; padding-left: 10px; max-height: 510px;  }
 ul#selectedMovieList li span {font-size: .8em; font-style: italic; color: #aaa; margin-right:  10px; cursor: pointer; }
 
 .activeRow{
@@ -66,11 +78,12 @@ color: red;
 
 #tmdbNotice { vertical-align: bottom; }
 
-#profile { position: absolute; right: 20px;  width: 400px; height: 500px; }
-#profile img { width: 400px; border-radius: 4; -moz-border-radius: 4px; border-radius: 4px; }
+#profile { float: right; width: calc(.46 * (100% - 30px)); height: auto; }
+#profile img { width: 100%; border-radius: 4; -moz-border-radius: 4px; border-radius: 4px; }
 #info { border: solid 1px #ddd; }
 .face.back { color: #ddd;  padding: 20px; background-color: #333; }
-.face.front img { max-height: 600px; }
+.face.front { color: #ddd;  padding: 20px 20px 10px 20px; background-color: #333; }
+.face.front img { max-height: 540px; margin-bottom: 10px; }
 .face.back.kellygreen { color: #DB5DEC; background-color: #89E541; }
 
 p.viewport {
@@ -108,7 +121,7 @@ p.viewport img.image {
 	width: 400px ;
 }
 
-div#footerWell { background-color:  #333; padding: 5px 10px; }
+div#footerWell { background-color:  #333; padding: 5px 10px; margin-top: 20px; }
 footer { color: #aaa;  text-align: right; font-size: 8px; }
 footer img { margin-left: 20px; }
 .scott { background-image:  url('../images/scott.png'); background-repeat: no-repeat; }

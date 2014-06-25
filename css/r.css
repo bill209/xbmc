@@ -1,0 +1,28 @@
+
+
+@media only screen
+and (max-width : 1020px) {
+/* Styles */
+	.well { padding: 10px; }
+	#container { border: solid 1px green; }
+	#scrollBox { display: none; }
+	ul#bookmarks { width: 24px; float: left; height: auto; font-size: 10px; line-height: 20px;  }
+	div#innerWell { height: 100%; width: calc(100% - 35px); min-width: 310px;}
+	ul#movieList { width: 100%; }
+	ul#movieList li { width: 100%; }
+}
+
+@media only screen
+and (max-width : 760px) {
+	div#profile { display: none; }
+	div#movieListBox { width: 100%; }
+	ul#movieList { font-size: 12px; }
+}
+
+@media only screen
+and (max-height : 790px) {
+	div#container { padding-top: 10px; padding-bottom: 0px; margin: 0 auto; }
+	div#movieListBox { height: calc(100% - 65px); }
+	div#footerWell { margin-top: 10px; margin-bottom: 0px; }
+	footer img { height: 30px; }
+}

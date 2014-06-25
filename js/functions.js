@@ -85,4 +85,18 @@ $(function() {
 	});
 });
 
+function getParameterByName(name) {
+	name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+	var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+		results = regex.exec(location.search);
+	return results == null ? false : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+// a little routine just to change the bg image of the container to the bcbsnc mms home page.
+// var init = function () {
+// 	if(getParameterByName('bcbsnc')){
+// 		defaultImgURL = 'images/bcbsnc.png';
+// 	};
+// };
+// init();
 

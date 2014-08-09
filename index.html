@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="mobile-web-app-capable" content="yes">
 	<title>NowPlaying</title>
 	<link rel="stylesheet" href="js/libs/bootstrap/css/bootstrap.min.css">
 	<link rel="stylesheet" href="css/main.css">
@@ -11,9 +13,12 @@
 
 <body ng-app="NowPlaying" ng-controller='mainCtrl'>
 
-
 	<div id='container' ng-style="{'background-image': 'url(' + img.url + ')'}">
 <!--		<img id='bigScreen' ng-src='{{img.url}}'> -->
+
+		<div id='mobileMenu' ng-show='glob.mobile || 1' ng-click='glob.justMyMovies = !glob.justMyMovies';>show my movies: {{glob.justMyMovies}}</div>
+
+
  		<div id='profile' ng-include src="'views/profile.html'"></div>
 		<div id='movieListBox'  ng-controller="MovieListCtrl">
 			<div id='movieListWell' class='well' ng-class="{trans80: glob.opacity}">
@@ -25,6 +30,7 @@
 					<ul id='movieList' ng-app="link" ng-mouseleave='leaveMovieList($index)'>
 						<li 	id="movie{{movie.idx}}"
 							class="list-group-item {{movie.bookmark }}"
+							ng-show="!glob.justMyMovies || (glob.justMyMovies && glob.moviePicks[$index] != undefined)"
 							ng-repeat='movie in data | limitTo: 999'
 							ng-click="selectMovie($index, movie.title)"
 							ng-class='{activeMovie: $index==selectedRow, highlightedMovie: $index==highlightedRow}'
@@ -36,6 +42,7 @@
 									ng-class="{true: 'scottPickTrue', false: 'scottPickFalse'}[glob.moviePicks[$index] != undefined]"
 									ng-click='togglePick($index, movie.title)'>
 							</span>
+<!-- 							<span>confirm removal <span class='removeYes'>Y</span> <span class='removeNo'>N</span></span> -->
 <!-- 							<span class='movieFlags' ng-show="getFlags(movie.movieId)">*</span> -->
 						</li>
 					</ul>
@@ -60,6 +67,8 @@
 	<script src="js/libs/bootstrap/js/bootstrap.min.js"></script>
 	<script src='js/main.js'></script>
 	<script src='js/functions.js'></script>
+	<script src='js/movieAPIs.js'></script>
+	<script src='js/db.js'></script>
 	<script src="https://cdn.firebase.com/v0/firebase.js"></script>
 	<script src="https://cdn.firebase.com/libs/angularfire/0.7.1/angularfire.min.js"></script>
 </body>

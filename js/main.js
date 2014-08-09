@@ -5,21 +5,22 @@ var app = angular.module('NowPlaying', []);
 var defaultImgURL = 'http://4.bp.blogspot.com/-hIirVYTQFRs/TwdWvcq55uI/AAAAAAAACt8/3frSkQULrn4/s320/film-reel.jpg';
 var defaultProfileImg = 'images/movie_reel.png';
 var myFirebase = 'https://boiling-fire-3340.firebaseio.com/movies/';
+var xbmcMovies = 'php/movies.json';
+var xbmcMovieCache = 'php/movieCache.json';
 // controllers ----------------------------------------------------------
-window.document.onload = function(e){
 
-};
 
 // at the bottom of your controller
 
 app.controller('mainCtrl', function mainCtrl($scope, xbmcFactory, tmdbFactory, firebaseFactory, configuration){
-var x = 1111233;
+
 	$scope.glob = {};
 	$scope.glob.fbMovies = {};
 	$scope.glob.moviePicks = {};
 	$scope.glob.scottPickins = false;  // used for the Scott konami
 	$scope.glob.username = '';
 	$scope.glob.flipped = false;
+	$scope.glob.justMyMovies = false;
 	$scope.glob.opacity = true;
 	$scope.curMovie = {};
 	$scope.curMovie.title = '';
@@ -37,6 +38,7 @@ var x = 1111233;
 	if($scope.glob.username){
 		$scope.glob.scottPickins = true;
 	}
+	$scope.glob.mobile =  /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
 	$scope.$watch('glob.scottPickins', function() {
 		if($scope.glob.scottPickins){
@@ -51,7 +53,7 @@ var x = 1111233;
 		$scope.img.url = url;
 	};
 	$scope.getMovieList = function(){
-		var promise = firebaseFactory.getSelectedMovies($scope.glob.username);
+		var promise = firebaseFactory.getSelectedMoviesByUser($scope.glob.username);
 		promise.then(function(movieList) {
 			$scope.glob.fbMovies = movieList;
 		}, function(reason) {
@@ -59,7 +61,7 @@ var x = 1111233;
 		});
 	};
 	$scope.loadFbMovies = function(){
-		var promise = firebaseFactory.getSelectedMovies($scope.glob.username);
+		var promise = firebaseFactory.getSelectedMoviesByUser($scope.glob.username);
 		promise.then(function(movieList) {
 			$scope.glob.fbMovies = movieList;
 			$scope.glob.moviePicks = movieList;
@@ -67,7 +69,7 @@ var x = 1111233;
 			alert('Failed: ' + reason);
 		});
 	};
-	var promise = xbmcFactory.getMovieCache();
+	var promise = xbmcFactory.getMovieCache(xbmcMovieCache);
 	promise.then(function(movieCache){
 		$scope.cache = movieCache;
 	});
@@ -123,7 +125,7 @@ app.controller( 'MovieListCtrl', function MovieListCtrl($scope, $location, $anch
 
 	xbmcFactory.setupBookmarks($scope);
 
-	var promise = xbmcFactory.getMovies();
+	var promise = xbmcFactory.getMovies(xbmcMovies);
 	promise.then(function(movieData){
 		$scope.data = movieData;
 	});
@@ -184,7 +186,7 @@ app.service('configuration', function(xbmcFactory, tmdbFactory, rottenTomatoesFa
 		var i = 0;
 		var configArr = [];
 
-		var promise = xbmcFactory.getMovies();
+		var promise = xbmcFactory.getMovies(xbmcMovies);
 		promise.then(function(xbmcList){
 			$.each(xbmcList, function(){						// loop through the movies
 				configArr[this.movieId] = this;
@@ -214,123 +216,6 @@ app.service('configuration', function(xbmcFactory, tmdbFactory, rottenTomatoesFa
 
 // factories ----------------------------------------------------------
 
-app.factory('xbmcFactory', function($q, $http) {
-	return {
-		getMovies: function(){
-			var deferred = $q.defer();
-			$http
-				.get('php/movies.json')
-				.then(function(d){
-					var movieData = addBookmarks(d.data.result.movies);
-// var newMovieIdx = movieData.length;
-// movieData[newMovieIdx] = { 'bookmark' : '', 'idx' : '0', 'movieId' : '0' , 'title' : 'scotts special movie' }
-					deferred.resolve(angular.fromJson(movieData));
-				});
-			return deferred.promise;
-		},
-		setupBookmarks: function(scope){
-			scope.alphabet = ['#','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O', 'P','R','S','T','U','V','W','X','Y','Z'];
-		},
-		getMovieCache: function(){
-			var deferred = $q.defer();
-			$http
-				.get('php/movieCache.json')
-				.then(function(d){
-					var movieCache =[];
-					$.each(d.data.result.movies, function(){				// convert json to associative array
-						movieCache[this.xbmcId] = [];				// xbmc ID is key
-						movieCache[this.xbmcId]['tmdbId'] = this.tmdbId;
-					});
-					deferred.resolve(movieCache);
-				});
-			return deferred.promise;
-		}
-	};
-});
-
-app.factory('rottenTomatoesFactory', function ($q, $http) {
-	var rtLinks = {
-		"getMovie" : "http://api.rottentomatoes.com/api/public/v1.0/movies.json?apikey=jq7aydjmufspr54dcffw7f66&q=[movietitle]&page_limit=1&callback=JSON_CALLBACK"
-	};
-	return {
-		getMovie: function(movie) {
-			var deferred = $q.defer();
-			var findMovie = rtLinks.getMovie.replace('[movietitle]', movie);
-			$http
-				.jsonp(findMovie)
-				.then(function(d) {
-					if(d.data.total == 0){
-						d.data.movies[0].posters.original = defaultImgURL;
-					}
-					deferred.resolve(d.data);
-				});
-			return deferred.promise;
-		},
-		loadPosterURLs: function(movie) {
-			var deferred = $q.defer();
-			$http
-				.get('php/posters.json')
-				.then(function(d) {
-					deferred.resolve(d.data);
-				});
-			return deferred.promise;
-		},
-	};
-});
-app.factory('tmdbFactory', function ($q, $http) {
-	var APIKEY =  '829f2c4b8c9c5304ea86fc7cf47b1053';
-	var tmdbLinks = {
-		"getMovieByName" :  "http://api.themoviedb.org/3/search/movie?api_key=829f2c4b8c9c5304ea86fc7cf47b1053&query=[movietitle]&callback=JSON_CALLBACK"
-//		&append_to_response=releases,trailers
-	};
-	return {
-		getMovie: function(movie) {
-			var deferred = $q.defer();
-			var findMovie = tmdbLinks.getMovieByName.replace('[movietitle]', movie.replace(' ','+'));
-			$http
-				.jsonp(findMovie)
-				.then(function(d) {
-					deferred.resolve(d.data);
-				});
-			return deferred.promise;
-		},
-		getImagePath: function(){
-			return 'http://image.tmdb.org/t/p/original';
-//			return 'http://d3gtl9l2a4fn1j.cloudfront.net/t/p/original';
-		},
-	};
-});
-
-app.factory('firebaseFactory', function ($q, $http) {
-	return {
-		removeMovie: function(data) {
-			var fb = new Firebase(myFirebase);
-			var ref=new Firebase(myFirebase + data.user + '/' + data.fbIdx);
-			ref.remove();
-		},
-		addMovie: function(data) {
-			var fb = new Firebase(myFirebase);
-			var ref=new Firebase(myFirebase + data.user );
-			newRef = ref.push({'idx':data.idx,'title':data.title});
-			return newRef.name();
-		},
-		getSelectedMovies: function(username){
-			var fb = new Firebase(myFirebase);
-			var deferred = $q.defer();
-			$http
-				.get(myFirebase + username + '.json')
-				.then(function(d){
-					if(d.data!=='null') {
-						var obj = convertFbToMl(d.data);
-					} else {
-						var obj = {};
-					}
-					deferred.resolve(obj);
-				});
-			return deferred.promise;
-		}
-	}
-});
 
 // directives ----------------------------------------------------------
 

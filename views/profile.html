@@ -1,15 +1,15 @@
 <div class='test flip' ng-controller= 'profileCtrl' >
 	<div class='card' ng-class="{'flipped': glob.flipped}">
-		<div class='face front trans80'>
+		<div class='face front'>
 			<img ng-src='{{profile.img.url}}' class="image">
 			<p class='controls'>
-				<span id='flipIt' ng-click="glob.flipped = !glob.flipped;">my movies</span>
-				<span ng-click="openTMDB(tmdb.movieInfo.id)" ng-show='tmdb.movieInfo.id > 0'>tmdb</span>
+				<span id='flipIt' ng-show='glob.scottPickins' ng-click="glob.flipped = !glob.flipped;">my movies</span>
+				<span id='tmdb' ng-click="openTMDB(tmdb.movieInfo.id)" ng-show='tmdb.movieInfo.id > 0'>tmdb</span>
 		<!-- 		<span ng-click='getMovieList()'>get movie list</span> -->
 		<!-- 		<span ng-click='loadFbMovies()'>load movies</span> -->
 			</p>
 		</div>
-		<div class='face back trans80' ng-class="{true: 'kellygreen'}[glob.username == 'scottzzzz']">
+		<div class='face back' ng-class="{trans80: glob.opacity}">
 			<p>{{glob.username}}'s movies</p>
 			<ul id='selectedMovieList'>
 				<li ng-repeat='(idx, movie) in glob.moviePicks'><span ng-click='copyMovie(idx, movie.fbIdx)'>-- copied --</span>&nbsp;&nbsp;<span ng-click='removeMovie(idx,movie.fbIdx)'>-- x --</span>{{movie.title | cut:true:30:' ...'}}</li>
